@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <title>Tutorial of Develop</title>
-    <link rel="stylesheet" th:href="@{/css/user/list.css}">
+<meta charset="utf-8">
+<title>Tutorial of Develop</title>
+<link rel="stylesheet" th:href="@{/css/user/list.css}">
 </head>
 <body>
     <h1>User情報管理システム</h1>
     <h2>User一覧(全件)</h2>
-     <form name="frm" method="post" th:action="@{/user/list}">
+    <!-- 追加ここから -->
+    <form method="post" th:action="@{/logout}">
+        <input type="submit" value="ログアウト">
+    </form><br>
+    <!-- 追加ここまで -->
+    <form name="frm" method="post" th:action="@{/user/list}">
         <a th:href="@{/user/register}">Userの登録</a>
         <input type="submit" name="deleteRun" id="deleteRun" value="(選択)したUserを一括削除">
+        <br><br>
         <table>
             <tr>
                 <th class="center">(選択)</th>
