@@ -55,7 +55,7 @@ public class UserController {
     }
 
     /** User更新画面を表示 */
-    @GetMapping("/update/{id}/")
+    @GetMapping("/update/{id}")
     public String getUser(@PathVariable("id") Integer id, Model model) {
         // Modelに登録
         model.addAttribute("user", service.getUser(id));
@@ -64,9 +64,14 @@ public class UserController {
     }
 
     /** User更新処理 */
-    @PostMapping("/update/{id}/")
-    public String postUser(User user) {
-        // User登録
+    @PostMapping("/update/{id}")
+    public String updateUser(@PathVariable("id") Integer id, @Validated User user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            // エラーあり
+            model.addAttribute("user", user); // モデルにユーザー情報を再度追加
+            return "user/update"; // 直接ビュー名を返す
+        }
+        // User更新
         service.saveUser(user);
         // 一覧画面にリダイレクト
         return "redirect:/user/list";
