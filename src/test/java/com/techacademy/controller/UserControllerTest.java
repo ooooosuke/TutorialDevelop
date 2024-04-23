@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,21 +45,37 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("User更新画面")
+    @DisplayName("User一覧画面")
     @WithMockUser
-    void testGetUser() throws Exception {
+    void testGetList() throws Exception {
         // HTTPリクエストに対するレスポンスの検証
-        MvcResult result = mockMvc.perform(get("/user/update/1/")) // URLにアクセス
-            .andExpect(status().isOk()) // ステータスを確認
-            .andExpect(model().attributeExists("user")) // Modelの内容を確認
-            .andExpect(model().hasNoErrors()) // Modelのエラー有無の確認
-            .andExpect(view().name("user/update")) // viewの確認
-            .andReturn(); // 内容の取得
+        MvcResult result = mockMvc.perform(get("/user/list")) // URLにアクセス
+                .andExpect(status().isOk()) // HTTPステータスが200OKであること
+                .andExpect(model().attributeExists("userlist")) // Modelにuserlistが含まれていること
+                .andExpect(model().hasNoErrors()) // Modelにエラーが無いこと
+                .andExpect(view().name("user/list")) // viewの名前が user/list であること
+                .andReturn(); // レスポンス内容を取得
 
-        // userの検証
-        // Modelからuserを取り出す
-        User user = (User)result.getModelAndView().getModel().get("user");
-        assertEquals(1, user.getId());
-        assertEquals("キラメキ太郎", user.getName());
+        // Modelからuserlistを取り出す
+        Object userlistObject = result.getModelAndView().getModel().get("userlist");
+        if (userlistObject instanceof List<?>) {
+            @SuppressWarnings("unchecked")
+            List<User> users = (List<User>) userlistObject;
+            assertEquals(3, users.size()); // 件数が3件であることを検証
+
+            // userlistから1件ずつ取り出し、idとnameを検証する
+            User firstUser = users.get(0);
+            assertEquals(1, firstUser.getId()); // idの検証
+            assertEquals("キラメキ太郎", firstUser.getName()); // nameの検証
+
+            User secondUser = users.get(1);
+            assertEquals(2, secondUser.getId()); // idの検証
+            assertEquals("キラメキ次郎", secondUser.getName()); // nameの検証
+
+            User thirdUser = users.get(2);
+            assertEquals(3, thirdUser.getId()); // idの検証
+            assertEquals("キラメキ花子", thirdUser.getName()); // nameの検証
+        }
+
     }
 }
